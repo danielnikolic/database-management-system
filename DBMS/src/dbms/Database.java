@@ -84,7 +84,7 @@ public class Database
 					System.out.println("4: String");
 					System.out.print("Choose a data type for " + attributeName + ": ");
 					String dataType = in.nextLine().trim();
-					while (!isNumeric(dataType) || dataType.equals(""))
+					while (!isNumeric(dataType, true) || dataType.equals("") || dataType.length() > 1)
 					{
 						System.out.print("\nEnter 1-4 for one of the above data types: ");
 						dataType = in.nextLine().trim();
@@ -271,6 +271,7 @@ public class Database
 					{
 						printWriter.println(list.get(i));
 					}
+					
 					printWriter.println(record);
 					printWriter.close();
 				}
@@ -312,6 +313,60 @@ public class Database
 				if (f.exists())
 				{
 					System.out.println("Table: " + tableName);
+					System.out.print("Choose a record to delete: ");
+					String record = in.nextLine().trim();
+					
+					while (!isNumeric(record, false) || record.equals("") || record.charAt(0) == '0')
+					{
+						System.out.println("Record must be an integer such as 1 for 'Record 1'");
+						System.out.print("Choose a valid record: ");
+						record = in.nextLine().trim();
+					}
+					
+					Scanner input = new Scanner(f);
+					ArrayList<String> list = new ArrayList<String>();
+
+					while (input.hasNextLine()) 
+					{
+					    list.add(input.nextLine());
+					}
+					input.close();
+					
+					boolean flag = false;
+					if (Integer.parseInt(record) > list.size() - 1)
+					{
+						flag = true;
+					}
+					
+					if (flag)
+					{
+						System.out.println("Record not found!");
+					}
+					else
+					{
+						int pos = 0;
+						for (int i = list.get(0).length() - 1; i >= 0; i--)
+						{
+							if (list.get(0).charAt(i - 1) == ':')
+							{
+								pos = i;
+								break;
+							}
+						}
+						
+						String line1 = list.get(0).substring(0, pos) + (list.size() - 2) + "]";
+						PrintWriter printWriter = new PrintWriter(new FileOutputStream(tableName + ".tb"), false);
+						printWriter.println(line1);
+						for (int i = 1; i <= list.size() - 1; i++)
+						{
+							if (Integer.parseInt(record) != i)
+							{
+								printWriter.println(list.get(i));
+							}
+						}
+						
+						printWriter.close();
+					}
 				}
 				else
 				{
@@ -385,9 +440,16 @@ public class Database
 		return str != null && str.matches("^[a-zA-Z0-9_]*$");
 	}
 	
-	private static boolean isNumeric(String str)
+	private static boolean isNumeric(String str, boolean flag)
 	{
-		return str != null && str.matches("^[1-4]*$");
+		if (flag)
+		{
+			return str != null && str.matches("^[1-4]*$");
+		}
+		else
+		{
+			return str != null && str.matches("^[0-9]*$");
+		}
 	}
 	
 	private static void getAttributes(String header, Table table)
