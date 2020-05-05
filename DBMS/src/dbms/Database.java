@@ -220,9 +220,8 @@ public class Database
 					{
 						System.out.print(t.getAttribute(i).getName() + ": ");
 						String value = eliminateSpaces(in.nextLine().trim());
-						while (!isAlphaNumeric(value) || value.equals(""))
+						while (!isValidType(value, t.getAttribute(i).getType()))
 						{
-							System.out.println("A record must be alphanumeric\n");
 							System.out.print(t.getAttribute(i).getName() + ": ");
 							value = eliminateSpaces(in.nextLine().trim());
 						}
@@ -516,21 +515,78 @@ public class Database
 	
 	private static int getAttributeType(String type)
 	{
-		if (type == "Integer")
+		if (type.equals("Integer"))
 		{
 			return 1;
 		}
-		else if (type == "Double")
+		else if (type.equals("Double"))
 		{
 			return 2;
 		}
-		else if (type == "Boolean")
+		else if (type.equals("Boolean"))
 		{
 			return 3;
 		}
 		else
 		{
 			return 4;
+		}
+	}
+	
+	private static boolean isValidType(String value, int type)
+	{
+		boolean flag = false;
+		if (type == 2)
+		{
+			flag = true;
+		}
+		
+		if ((isAlphaNumeric(value) && !value.equals("")) || flag)
+		{
+			if (type == 1)
+			{
+				try
+				{
+					Integer.parseInt(value);
+					return true;
+				}
+				catch (NumberFormatException e)
+				{
+					System.out.println("Value must be an integer");
+					return false;
+				}
+			}
+			else if (type == 2)
+			{
+				try
+				{
+					Double.parseDouble(value);
+					return true;
+				}
+				catch (NumberFormatException e)
+				{
+					System.out.println("Value must be a double");
+					return false;
+				}
+			}
+			else if (type == 3)
+			{
+				if (!value.equalsIgnoreCase("T") && !value.equalsIgnoreCase("F"))
+				{
+					System.out.println("Value must be boolean (T or F)");
+					return false;
+				}
+				return true;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			System.out.println("A record must be alphanumeric");
+			return false;
 		}
 	}
 }
