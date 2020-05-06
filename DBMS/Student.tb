@@ -1,5 +1,4 @@
-[Attribute-Count:3] [ID:Integer][First_Name:String][Last_Name:String] [Record-Count:4]
+[Attribute-Count:3] [ID:Integer][First_Name:String][Last_Name:String] [Record-Count:3]
 {1 | Daniel | Nikolic}
 {3 | Nathan | Bretz}
-{7 | Vismay | Gehlot}
 {4 | Hayden | Sellars}

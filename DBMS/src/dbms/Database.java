@@ -376,6 +376,68 @@ public class Database
 			else if (command.equalsIgnoreCase("Query"))
 			{
 				System.out.println("----------------------------------------");
+				System.out.print("Choose a table to search: ");
+				String tableName = eliminateSpaces(in.nextLine().trim());
+				
+				File f = new File(tableName + ".tb");
+				if (f.exists())
+				{
+					System.out.println("Table: " + tableName);
+					System.out.print("Choose a record to display: ");
+					String id = in.nextLine().trim();
+					
+					while (!isNumeric(id, false) || id.equals("") || id.charAt(0) == '0')
+					{
+						System.out.println("Record must be an integer such as 1 for 'Record 1'");
+						System.out.print("Choose a valid record: ");
+						id = in.nextLine().trim();
+					}
+					
+					Scanner input = new Scanner(f);
+					ArrayList<String> list = new ArrayList<String>();
+
+					while (input.hasNextLine()) 
+					{
+					    list.add(input.nextLine());
+					}
+					input.close();
+					
+					boolean flag = false;
+					if (Integer.parseInt(id) > list.size() - 1)
+					{
+						flag = true;
+					}
+					if (flag)
+					{
+						System.out.println("Record not found!");
+					}
+					else
+					{
+						String record = list.get(Integer.parseInt(id));
+						String header = list.get(0);
+					
+						Table t = new Table(tableName);
+						getAttributes(header, t);
+					
+						record = record.replaceAll("\\{+", " ");
+						record = record.replaceAll("\\}+", " ");
+						record = record.replaceAll("\\|+", " ");
+						
+						String[] records = new String[t.getAttributeList().size()];
+						record = reduceSpaces(record.trim());
+						records = record.split(" ");
+					
+						for (int i = 0; i <= t.getAttributeList().size() - 1; i++)
+						{
+							System.out.print(t.getAttribute(i).getName() + ": ");
+							System.out.println(records[i]);
+						}
+					}
+				}
+				else
+				{
+					System.out.println("Table does not exist!");
+				}
 				System.out.println("----------------------------------------");
 			}
 			else if (command.equalsIgnoreCase("Display Commands"))
